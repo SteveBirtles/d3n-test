@@ -27,7 +27,7 @@ func main() {
 
 	// Create perspective camera
 	cam := camera.New(1)
-	cam.SetPosition(0, 0, 3)
+	cam.SetPosition(0, 0, 15)
 	scene.Add(cam)
 
 	// Set up orbit control for the camera
@@ -59,14 +59,18 @@ func main() {
 	})
 	scene.Add(btn)*/
 
-	dec, err := obj.Decode("obj/Fusion_Hulk.obj", "obj/Fusion_Hulk.mtl")
+	dec, err := obj.Decode("Fusion_Hulk.obj", "Fusion_Hulk.mtl")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	group, err := dec.NewGroup()
-	if err != nil {
-		log.Fatal(err)
+	group := core.NewNode()
+	for i := 0; i < len(dec.Objects); i++ {
+		mesh, err := dec.NewMesh(&dec.Objects[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+		group.Add(mesh)
 	}
 
 	scene.Add(group)
@@ -74,15 +78,15 @@ func main() {
 	// Create and add lights to the scene
 	scene.Add(light.NewAmbient(&math32.Color{1.0, 1.0, 1.0}, 0.8))
 
-	/*pointLight := light.NewPoint(&math32.Color{1, 1, 1}, 5.0)
-	pointLight.SetPosition(1, 0, 2)
-	scene.Add(pointLight)*/
+	pointLight := light.NewPoint(&math32.Color{1, 1, 1}, 5.0)
+	pointLight.SetPosition(0, 5, 15)
+	scene.Add(pointLight)
 
 	// Create and add an axis helper to the scene
 	//scene.Add(helper.NewAxes(0.5))
 
 	// Set background color to gray
-	a.Gls().ClearColor(0.0, 0.0, 0.25, 1.0)
+	a.Gls().ClearColor(0.0, 0.0, 0.5, 1.0)
 
 	// Run the application
 	a.Run(func(renderer *renderer.Renderer, deltaTime time.Duration) {
